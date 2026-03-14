@@ -428,23 +428,37 @@
   function checkPass() {
     const input = document.getElementById("panelPass").value;
     if (input === CORRECT_PASSWORD) {
-      const overlay = document.getElementById("passwordOverlay");
-      overlay.style.opacity = "0";
-      overlay.style.transform = "scale(1.1)";
-      setTimeout(() => {
-        overlay.style.display = "none";
-      }, 500);
+      localStorage.setItem("ss_panel_auth", "true");
+      unlockPanel();
     } else {
       const err = document.getElementById("passError");
       err.textContent = "❌ ACCESS DENIED";
       document.getElementById("panelPass").value = "";
       document.getElementById("panelPass").focus();
-      // Subtle shake
       const card = document.querySelector(".pass-card");
       card.style.animation = "none";
       setTimeout(() => { card.style.animation = "shake 0.4s"; }, 10);
     }
   }
+
+  function unlockPanel() {
+    const overlay = document.getElementById("passwordOverlay");
+    overlay.style.opacity = "0";
+    overlay.style.transform = "scale(1.1)";
+    setTimeout(() => {
+      overlay.style.display = "none";
+    }, 500);
+  }
+
+  // Auto-unlock if already authenticated
+  window.addEventListener('load', () => {
+    if (localStorage.getItem("ss_panel_auth") === "true") {
+      document.getElementById("passwordOverlay").style.display = "none";
+    }
+    // Load last nick
+    const lastNick = localStorage.getItem("ss_last_nick");
+    if (lastNick) document.getElementById("mcUsername").value = lastNick;
+  });
   
   // Custom shake animation
   const style = document.createElement('style');
@@ -471,7 +485,8 @@
 
       <div class="field">
         <label>Nick Minecraft</label>
-        <input type="text" id="mcUsername" placeholder="np. Spoleczniak_" autocomplete="off">
+        <input type="text" id="mcUsername" placeholder="np. Spoleczniak_" autocomplete="off" 
+               oninput="localStorage.setItem('ss_last_nick', this.value)">
       </div>
 
       <div class="row">
