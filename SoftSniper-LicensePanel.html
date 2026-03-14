@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SoftSniper – License Panel</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+  :root {
+    --purple: #8B00FF;
+    --purple-light: #A020F0;
+    --purple-dark: #5500AA;
+    --cyan: #00FFFF;
+    --cyan-dim: #00CCCC;
+    --bg: #08020F;
+    --bg-panel: #140A24;
+    --bg-card: #1C0D30;
+    --border: #2B1442;
+    --border-accent: #3D1E5E;
+    --text: #FFFFFF;
+    --text-dim: #AAAAAA;
+    --text-very-dim: #666;
+    --red: #FF0055;
+    --green: #00FF88;
+    --yellow: #FFCC00;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    background-image:
+      radial-gradient(ellipse at 20% 20%, rgba(139,0,255,0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 80%, rgba(0,255,255,0.08) 0%, transparent 60%);
+  }
+
+  /* ── HEADER ── */
+  header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 18px 32px;
+    border-bottom: 1px solid var(--border);
+    background: rgba(20,10,36,0.8);
+    backdrop-filter: blur(12px);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  header h1 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--purple-light), var(--cyan));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.05em;
+  }
+  header span.badge {
+    background: linear-gradient(90deg, var(--purple-dark), var(--purple));
+    color: var(--cyan);
+    font-size: 0.65rem;
+    font-weight: 600;
+    padding: 2px 10px;
+    border-radius: 20px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    border: 1px solid var(--purple);
+  }
+
+  /* ── TOKEN BAR ── */
+  #token-bar {
+    background: rgba(139,0,255,0.07);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 32px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  #token-bar label { color: var(--text-dim); font-size: 0.8rem; font-weight: 500; white-space: nowrap; }
+  #ghToken {
+    flex: 1;
+    background: var(--bg-card);
+    border: 1px solid var(--border-accent);
+    border-radius: 8px;
+    padding: 7px 12px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    outline: none;
+    transition: border-color .2s;
+  }
+  #ghToken:focus { border-color: var(--purple); }
+  #token-status { font-size: 0.75rem; color: var(--text-dim); }
+  #token-status.ok { color: var(--green); }
+  #token-status.err { color: var(--red); }
+
+  /* ── MAIN LAYOUT ── */
+  main {
+    display: grid;
+    grid-template-columns: 440px 1fr;
+    gap: 24px;
+    padding: 28px 32px;
+    max-width: 1300px;
+    margin: 0 auto;
+  }
+
+  /* ── SECTION TITLES ── */
+  .section-title {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--cyan);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .section-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border-accent), transparent);
+  }
+
+  /* ── PANEL CARD ── */
+  .card {
+    background: var(--bg-panel);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--purple), var(--cyan), transparent);
+  }
+
+  /* ── FORM ── */
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    letter-spacing: 0.04em;
+  }
+  .field input, .field select {
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--border-accent);
+    border-radius: 10px;
+    padding: 9px 13px;
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .field input:focus, .field select:focus {
+    border-color: var(--purple-light);
+    box-shadow: 0 0 0 3px rgba(160,32,240,0.15);
+  }
+  .field select option { background: var(--bg-card); }
+
+  /* Generated key display */
+  #generatedKey {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--cyan);
+    letter-spacing: 0.1em;
+    background: rgba(0,255,255,0.05);
+    border-color: var(--cyan-dim) !important;
+    cursor: pointer;
+  }
+  #generatedKey:hover { background: rgba(0,255,255,0.1); }
+
+  /* ── ROW ── */
+  .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  /* ── BUTTONS ── */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all .18s;
+    outline: none;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--purple), var(--purple-dark));
+    color: var(--cyan);
+    border: 1px solid var(--purple-light);
+    width: 100%;
+    margin-top: 6px;
+    padding: 12px;
+    font-size: 0.9rem;
+    box-shadow: 0 4px 20px rgba(139,0,255,0.3);
+  }
+  .btn-primary:hover { background: linear-gradient(135deg, var(--purple-light), var(--purple)); transform: translateY(-1px); box-shadow: 0 6px 26px rgba(139,0,255,0.45); }
+  .btn-primary:active { transform: none; }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+  .btn-danger { background: rgba(255,0,85,0.12); color: var(--red); border: 1px solid rgba(255,0,85,0.3); font-size: 0.75rem; padding: 5px 10px; border-radius: 6px; }
+  .btn-danger:hover { background: rgba(255,0,85,0.25); }
+  .btn-regen { background: rgba(0,255,255,0.07); color: var(--cyan); border: 1px solid rgba(0,255,255,0.2); padding: 5px 10px; font-size: 0.75rem; border-radius: 6px; margin-top: 4px; }
+  .btn-regen:hover { background: rgba(0,255,255,0.15); }
+
+  /* ── STATUS ── */
+  #pushStatus {
+    margin-top: 14px;
+    font-size: 0.82rem;
+    min-height: 20px;
+    text-align: center;
+    transition: color .3s;
+  }
+  #pushStatus.success { color: var(--green); }
+  #pushStatus.error { color: var(--red); }
+  #pushStatus.loading { color: var(--yellow); }
+
+  /* ── LICENSE LIST ── */
+  #licenseList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    max-height: calc(100vh - 230px);
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+  #licenseList::-webkit-scrollbar { width: 4px; }
+  #licenseList::-webkit-scrollbar-track { background: transparent; }
+  #licenseList::-webkit-scrollbar-thumb { background: var(--purple); border-radius: 4px; }
+
+  .lic-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: border-color .2s, background .2s;
+    position: relative;
+  }
+  .lic-card:hover { border-color: var(--border-accent); background: rgba(60,30,100,0.3); }
+  .lic-card .lic-status {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .lic-card .lic-status.active { background: var(--cyan); box-shadow: 0 0 6px var(--cyan); }
+  .lic-card .lic-status.inactive { background: var(--red); }
+  .lic-card .lic-info { flex: 1; min-width: 0; }
+  .lic-card .lic-nick { font-weight: 600; font-size: 0.9rem; color: var(--text); }
+  .lic-card .lic-meta {
+    font-size: 0.72rem;
+    color: var(--text-dim);
+    margin-top: 3px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .lic-card .lic-meta span { display: flex; align-items: center; gap: 4px; }
+  .lic-card .lic-key {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--cyan);
+    letter-spacing: 0.05em;
+    background: rgba(0,255,255,0.06);
+    padding: 3px 8px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .lic-actions { display: flex; gap: 6px; align-items: center; }
+  .empty-state {
+    text-align: center;
+    color: var(--text-very-dim);
+    padding: 40px 0;
+    font-size: 0.85rem;
+  }
+
+  /* ── STATS ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .stat-box {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    text-align: center;
+  }
+  .stat-box .stat-num { font-size: 1.6rem; font-weight: 700; color: var(--cyan); }
+  .stat-box .stat-lbl { font-size: 0.68rem; color: var(--text-dim); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.08em; }
+
+  /* ── FILTER ── */
+  #filter {
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid var(--border-accent);
+    border-radius: 8px;
+    padding: 7px 12px;
+    color: var(--text);
+    font-size: 0.82rem;
+    outline: none;
+    margin-bottom: 12px;
+    font-family: 'Inter', sans-serif;
+  }
+  #filter:focus { border-color: var(--purple); }
+
+  /* spinner */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(0,255,255,0.2); border-top-color: var(--cyan); border-radius: 50%; animation: spin .7s linear infinite; }
+
+  @media (max-width: 900px) {
+    main { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🎯 SoftSniper</h1>
+  <span class="badge">License Panel</span>
+</header>
+
+<!-- GitHub Token -->
+<div id="token-bar">
+  <label for="ghToken">🔑 GitHub Token (PAT):</label>
+  <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+    oninput="saveToken(this.value)" autocomplete="off">
+  <span id="token-status">Token niezapisany</span>
+</div>
+
+<main>
+  <!-- LEFT: Generator -->
+  <div>
+    <div class="card">
+      <div class="section-title">Generuj licencję</div>
+
+      <div class="field">
+        <label>Nick Minecraft</label>
+        <input type="text" id="mcUsername" placeholder="np. Spoleczniak_" autocomplete="off">
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Subskrypcja</label>
+          <select id="subType">
+            <option value="LIFETIME">🔷 LIFETIME</option>
+            <option value="MONTHLY">📅 MONTHLY</option>
+            <option value="WEEKLY">📆 WEEKLY</option>
+            <option value="TRIAL">🆓 TRIAL</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Ważna do</label>
+          <input type="date" id="expiresAt" value="2099-01-01">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Klucz licencji</label>
+        <input type="text" id="generatedKey" class="generatedKey" readonly
+               placeholder="Kliknij 'Generuj nowy klucz'"
+               onclick="copyKey()" title="Kliknij aby skopiować">
+        <button class="btn btn-regen" onclick="genKey()">🔄 Generuj nowy klucz</button>
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label>Aktywna</label>
+          <select id="activeField">
+            <option value="true">✅ Tak</option>
+            <option value="false">❌ Nie</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Zablokowana</label>
+          <select id="blacklistedField">
+            <option value="false">✅ Nie</option>
+            <option value="true">🚫 Tak</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="btn btn-primary" onclick="pushLicense()" id="pushBtn">
+        ⬆ Dodaj licencję do GitHub
+      </button>
+
+      <div id="pushStatus"></div>
+    </div>
+  </div>
+
+  <!-- RIGHT: License list -->
+  <div>
+    <div class="card" style="height:100%">
+      <div class="section-title">Wydane licencje</div>
+
+      <div class="stats-row" id="statsRow">
+        <div class="stat-box"><div class="stat-num" id="statTotal">–</div><div class="stat-lbl">Razem</div></div>
+        <div class="stat-box"><div class="stat-num" id="statActive">–</div><div class="stat-lbl">Aktywnych</div></div>
+        <div class="stat-box"><div class="stat-num" id="statExpired">–</div><div class="stat-lbl">Wygasłe</div></div>
+      </div>
+
+      <input id="filter" placeholder="🔍 Filtruj po nicku lub kluczu..." oninput="renderList()">
+
+      <div id="licenseList">
+        <div class="empty-state">Wprowadź token GitHub i odśwież listę.</div>
+      </div>
+
+      <button class="btn" style="margin-top:12px; background:rgba(0,255,255,0.06); color:var(--cyan); border:1px solid rgba(0,255,255,0.2); width:100%; font-size:0.8rem; padding:8px;" onclick="loadExisting()">
+        🔄 Odśwież listę
+      </button>
+    </div>
+  </div>
+</main>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────────────────
+const GITHUB_OWNER = 'bananus12345';
+const GITHUB_REPO  = 'licki';
+const GITHUB_PATH  = 'lickiautorynek'; // folder in repo
+
+// ── STATE ────────────────────────────────────────────────────────────────────
+let licenseData = []; // {filename, nick, data, sha}
+
+// ── TOKEN ────────────────────────────────────────────────────────────────────
+function getToken() { return document.getElementById('ghToken').value.trim(); }
+function saveToken(v) {
+  try { localStorage.setItem('ss_gh_token', v); } catch(e) {}
+  document.getElementById('token-status').textContent = v ? '🔒 Token ustawiony' : 'Token niezapisany';
+  document.getElementById('token-status').className = v ? 'ok' : '';
+}
+(function restoreToken() {
+  const t = localStorage.getItem('ss_gh_token');
+  if (t) { document.getElementById('ghToken').value = t; saveToken(t); }
+})();
+
+// ── KEY GENERATION ────────────────────────────────────────────────────────────
+function rand(len) {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+  let s = '';
+  for (let i = 0; i < len; i++) s += chars[Math.floor(Math.random() * chars.length)];
+  return s;
+}
+function genKey() {
+  const key = `SOFT-${rand(4)}-${rand(4)}-${rand(4)}-${rand(4)}`;
+  document.getElementById('generatedKey').value = key;
+  return key;
+}
+function copyKey() {
+  const k = document.getElementById('generatedKey').value;
+  if (!k) return;
+  navigator.clipboard.writeText(k).then(() => showStatus('📋 Klucz skopiowany!', 'success', 2000));
+}
+
+// ── DATE HELPERS ─────────────────────────────────────────────────────────────
+function setDefaultDate() {
+  const sub = document.getElementById('subType').value;
+  const d = new Date();
+  if (sub === 'LIFETIME') d.setFullYear(2099);
+  else if (sub === 'MONTHLY') d.setMonth(d.getMonth() + 1);
+  else if (sub === 'WEEKLY') d.setDate(d.getDate() + 7);
+  else { d.setDate(d.getDate() + 3); } // TRIAL
+  document.getElementById('expiresAt').value = d.toISOString().split('T')[0];
+}
+document.getElementById('subType').addEventListener('change', setDefaultDate);
+
+// ── STATUS ────────────────────────────────────────────────────────────────────
+function showStatus(msg, cls, timeout) {
+  const el = document.getElementById('pushStatus');
+  el.textContent = msg;
+  el.className = cls;
+  if (timeout) setTimeout(() => { el.textContent = ''; el.className = ''; }, timeout);
+}
+
+// ── GITHUB API ────────────────────────────────────────────────────────────────
+async function ghRequest(method, path, body) {
+  const token = getToken();
+  if (!token) throw new Error('Brak GitHub token!');
+  const resp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`, {
+    method,
+    headers: {
+      'Authorization': `token ${token}`,
+      'Content-Type': 'application/json',
+      'Accept': 'application/vnd.github.v3+json'
+    },
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const data = await resp.json();
+  if (!resp.ok) throw new Error(data.message || `HTTP ${resp.status}`);
+  return data;
+}
+
+// ── PUSH LICENSE ──────────────────────────────────────────────────────────────
+async function pushLicense() {
+  const nick = document.getElementById('mcUsername').value.trim();
+  const key  = document.getElementById('generatedKey').value.trim();
+
+  if (!nick) { showStatus('❌ Wpisz nick!', 'error'); return; }
+  if (!key)  { genKey(); showStatus('🔑 Wygenerowano klucz – kliknij ponownie aby zapisać.', 'loading'); return; }
+  if (!getToken()) { showStatus('❌ Brak GitHub Token!', 'error'); return; }
+
+  const expiry = document.getElementById('expiresAt').value;
+  const active = document.getElementById('activeField').value === 'true';
+  const blacklisted = document.getElementById('blacklistedField').value === 'true';
+  const sub = document.getElementById('subType').value;
+
+  const licenseObj = {
+    licenseKey: key,
+    mcUsername: nick,
+    subscriptionType: sub,
+    expiresAt: expiry + ' ',
+    active,
+    blacklisted
+  };
+
+  const filename = `LICENSE_${nick}.json`;
+  const filePath = `${GITHUB_PATH}/${filename}`;
+  const content = btoa(unescape(encodeURIComponent(JSON.stringify(licenseObj, null, 2))));
+
+  document.getElementById('pushBtn').disabled = true;
+  showStatus('<span class="spinner"></span> Dodawanie...', 'loading');
+  document.getElementById('pushStatus').innerHTML = '⏳ Dodawanie...';
+
+  try {
+    // Check if file exists (to get SHA for update)
+    let sha = undefined;
+    const existing = licenseData.find(l => l.nick === nick);
+    if (existing && existing.sha) sha = existing.sha;
+
+    const body = {
+      message: `[SoftSniper Panel] ${sha ? 'Update' : 'Add'} license for ${nick}`,
+      content,
+      ...(sha ? { sha } : {})
+    };
+
+    await ghRequest('PUT', filePath, body);
+
+    showStatus(`✅ Licencja dla §b${nick}§f dodana!`.replace('§b','').replace('§f',''), 'success', 6000);
+
+    // Clear form
+    document.getElementById('mcUsername').value = '';
+    document.getElementById('generatedKey').value = '';
+
+    // Refresh list
+    setTimeout(loadExisting, 800);
+  } catch (err) {
+    showStatus('❌ Błąd: ' + err.message, 'error');
+  } finally {
+    document.getElementById('pushBtn').disabled = false;
+  }
+}
+
+// ── LOAD EXISTING LICENSES ────────────────────────────────────────────────────
+async function loadExisting() {
+  if (!getToken()) {
+    document.getElementById('licenseList').innerHTML = '<div class="empty-state">⚠ Wprowadź GitHub Token aby załadować listę.</div>';
+    return;
+  }
+  try {
+    const files = await ghRequest('GET', GITHUB_PATH);
+    licenseData = [];
+
+    const jsonFiles = files.filter(f => f.name.startsWith('LICENSE_') && f.name.endsWith('.json'));
+
+    for (const f of jsonFiles) {
+      try {
+        const raw = await fetch(f.download_url).then(r => r.json());
+        licenseData.push({ filename: f.name, nick: raw.mcUsername, data: raw, sha: f.sha });
+      } catch (e) { console.warn('Could not parse', f.name); }
+    }
+
+    updateStats();
+    renderList();
+  } catch (err) {
+    document.getElementById('licenseList').innerHTML = `<div class="empty-state">❌ Błąd ładowania: ${err.message}</div>`;
+  }
+}
+
+// ── STATS ─────────────────────────────────────────────────────────────────────
+function updateStats() {
+  const now = new Date();
+  const total = licenseData.length;
+  const active = licenseData.filter(l => l.data.active && new Date(l.data.expiresAt) > now).length;
+  const expired = total - active;
+  document.getElementById('statTotal').textContent = total;
+  document.getElementById('statActive').textContent = active;
+  document.getElementById('statExpired').textContent = expired;
+}
+
+// ── RENDER LIST ───────────────────────────────────────────────────────────────
+function renderList() {
+  const query = document.getElementById('filter').value.toLowerCase();
+  const list = document.getElementById('licenseList');
+
+  let filtered = licenseData.filter(l =>
+    l.nick.toLowerCase().includes(query) ||
+    l.data.licenseKey.toLowerCase().includes(query)
+  );
+
+  if (filtered.length === 0) {
+    list.innerHTML = '<div class="empty-state">Brak licencji. Dodaj pierwszą!</div>';
+    return;
+  }
+
+  list.innerHTML = '';
+  const now = new Date();
+
+  for (const lic of filtered) {
+    const d = lic.data;
+    const isActive = d.active && new Date(d.expiresAt) > now && !d.blacklisted;
+    const expDate = d.expiresAt ? d.expiresAt.trim() : '—';
+    const isLifetime = expDate.startsWith('2099');
+
+    const card = document.createElement('div');
+    card.className = 'lic-card';
+    card.innerHTML = `
+      <div class="lic-status ${isActive ? 'active' : 'inactive'}"></div>
+      <div class="lic-info">
+        <div class="lic-nick">${escHtml(d.mcUsername)}</div>
+        <div class="lic-meta">
+          <span>📦 ${d.subscriptionType}</span>
+          <span>📅 ${isLifetime ? 'LIFETIME ∞' : expDate}</span>
+          ${d.blacklisted ? '<span style="color:var(--red)">🚫 BANNED</span>' : ''}
+        </div>
+      </div>
+      <div class="lic-key" title="${escHtml(d.licenseKey)}">${escHtml(d.licenseKey)}</div>
+      <div class="lic-actions">
+        <button class="btn btn-regen" onclick="editLic('${escHtml(d.mcUsername)}')" title="Wskocz do edycji">✏</button>
+        <button class="btn btn-danger" onclick="deleteLic('${escHtml(lic.filename)}','${escHtml(lic.sha)}','${escHtml(d.mcUsername)}')" title="Usuń">🗑</button>
+      </div>
+    `;
+    list.appendChild(card);
+  }
+}
+
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+// ── EDIT (fill form) ──────────────────────────────────────────────────────────
+function editLic(nick) {
+  const lic = licenseData.find(l => l.nick === nick);
+  if (!lic) return;
+  const d = lic.data;
+  document.getElementById('mcUsername').value = d.mcUsername;
+  document.getElementById('generatedKey').value = d.licenseKey;
+  document.getElementById('subType').value = d.subscriptionType;
+  document.getElementById('expiresAt').value = (d.expiresAt||'').trim();
+  document.getElementById('activeField').value = String(d.active);
+  document.getElementById('blacklistedField').value = String(d.blacklisted);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// ── DELETE ────────────────────────────────────────────────────────────────────
+async function deleteLic(filename, sha, nick) {
+  if (!confirm(`Usunąć licencję dla ${nick}?`)) return;
+  try {
+    const filePath = `${GITHUB_PATH}/${filename}`;
+    await ghRequest('DELETE', filePath, {
+      message: `[SoftSniper Panel] Remove license for ${nick}`,
+      sha
+    });
+    licenseData = licenseData.filter(l => l.filename !== filename);
+    updateStats();
+    renderList();
+    showStatus(`🗑 Usunięto licencję ${nick}`, 'success', 4000);
+  } catch (err) {
+    showStatus('❌ Błąd usuwania: ' + err.message, 'error');
+  }
+}
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+genKey();
+if (getToken()) loadExisting();
+</script>
+</body>
+</html>
