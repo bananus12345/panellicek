@@ -477,11 +477,17 @@
   <span class="badge">License Panel</span>
 </header>
 
-<main>
-  <!-- LEFT: Generator -->
-  <div>
-    <div class="card">
-      <div class="section-title">Generuj licencję</div>
+<!-- GitHub Token -->
+<div id="token-bar" style="display:none; transition: all 0.3s;">
+  <label for="ghToken">🔑 GitHub Token (PAT):</label>
+  <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
+    oninput="saveToken(this.value)" autocomplete="off">
+  <button class="btn btn-regen" style="margin:0; padding:4px 8px;" onclick="toggleTokenBar()">HIDE</button>
+</div>
+<div style="padding: 10px 32px; background: rgba(0,255,255,0.05); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+  <span style="font-size:0.75rem; color:var(--cyan-dim);">🛡️ TOKEN PROTECTION ACTIVE</span>
+  <button class="btn btn-regen" style="margin:0; padding:4px 10px; font-size:0.7rem;" onclick="toggleTokenBar()">⚙️ EDIT TOKEN</button>
+</div>
 
       <div class="field">
         <label>Nick Minecraft</label>
@@ -572,7 +578,26 @@ const GITHUB_PATH  = 'lickiautorynek'; // folder in repo
 let licenseData = []; // {filename, nick, data, sha}
 
 // ── TOKEN ────────────────────────────────────────────────────────────────────
-function getToken() { return "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"; }
+const DEFAULT_TOKEN = "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";
+
+function getToken() { 
+  const saved = localStorage.getItem('ss_gh_token');
+  return (saved && saved.length > 5) ? saved : DEFAULT_TOKEN; 
+}
+
+function saveToken(v) {
+  try { localStorage.setItem('ss_gh_token', v); } catch(e) {}
+}
+
+function toggleTokenBar() {
+  const bar = document.getElementById('token-bar');
+  bar.style.display = bar.style.display === 'none' ? 'flex' : 'none';
+}
+
+(function initTokenUI() {
+  const current = getToken();
+  document.getElementById('ghToken').value = current;
+})();
 
 // ── KEY GENERATION ────────────────────────────────────────────────────────────
 function rand(len) {
@@ -616,17 +641,28 @@ function showStatus(msg, cls, timeout) {
 async function ghRequest(method, path, body) {
   const token = getToken();
   if (!token) throw new Error('Brak GitHub token!');
+  
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json',
+    'Accept': 'application/vnd.github.v3+json',
+    'X-GitHub-Api-Version': '2022-11-28'
+  };
+
+  console.log(`[GH] Requesting ${method} ${path}`);
+  
   const resp = await fetch(`https://api.github.com/repos/${GITHUB_OWNER}/${GITHUB_REPO}/contents/${path}`, {
     method,
-    headers: {
-      'Authorization': `token ${token}`,
-      'Content-Type': 'application/json',
-      'Accept': 'application/vnd.github.v3+json'
-    },
+    headers,
     body: body ? JSON.stringify(body) : undefined
   });
+  
   const data = await resp.json();
-  if (!resp.ok) throw new Error(data.message || `HTTP ${resp.status}`);
+  if (!resp.ok) {
+    console.error('[GH] Error:', data);
+    if (resp.status === 401) throw new Error('Błędny Token (Bad credentials) - sprawdź czy token ghp_... jest poprawny i ma uprawnienia "repo"');
+    throw new Error(data.message || `HTTP ${resp.status}`);
+  }
   return data;
 }
 
