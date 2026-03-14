@@ -463,14 +463,6 @@
   <span class="badge">License Panel</span>
 </header>
 
-<!-- GitHub Token -->
-<div id="token-bar">
-  <label for="ghToken">🔑 GitHub Token (PAT):</label>
-  <input type="password" id="ghToken" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
-    oninput="saveToken(this.value)" autocomplete="off">
-  <span id="token-status">Token niezapisany</span>
-</div>
-
 <main>
   <!-- LEFT: Generator -->
   <div>
@@ -565,16 +557,7 @@ const GITHUB_PATH  = 'lickiautorynek'; // folder in repo
 let licenseData = []; // {filename, nick, data, sha}
 
 // ── TOKEN ────────────────────────────────────────────────────────────────────
-function getToken() { return document.getElementById('ghToken').value.trim(); }
-function saveToken(v) {
-  try { localStorage.setItem('ss_gh_token', v); } catch(e) {}
-  document.getElementById('token-status').textContent = v ? '🔒 Token ustawiony' : 'Token niezapisany';
-  document.getElementById('token-status').className = v ? 'ok' : '';
-}
-(function restoreToken() {
-  const t = localStorage.getItem('ss_gh_token');
-  if (t) { document.getElementById('ghToken').value = t; saveToken(t); }
-})();
+function getToken() { return "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"; }
 
 // ── KEY GENERATION ────────────────────────────────────────────────────────────
 function rand(len) {
