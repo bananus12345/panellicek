@@ -491,7 +491,7 @@
 
 <main>
   <!-- LEFT: Generator -->
-  <div>
+  <aside>
     <div class="card">
       <div class="section-title">Generuj licencję</div>
 
@@ -548,10 +548,10 @@
 
       <div id="pushStatus"></div>
     </div>
-  </div>
+  </aside>
 
   <!-- RIGHT: License list -->
-  <div>
+  <section id="licenseSection">
     <div class="card" style="height:100%">
       <div class="section-title">Wydane licencje</div>
 
@@ -571,7 +571,7 @@
         🔄 Odśwież listę
       </button>
     </div>
-  </div>
+  </section>
 </main>
 
 <script>
@@ -584,7 +584,7 @@ const GITHUB_PATH  = 'lickiautorynek'; // folder in repo
 let licenseData = []; // {filename, nick, data, sha}
 
 // ── TOKEN ────────────────────────────────────────────────────────────────────
-const DEFAULT_TOKEN = "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";
+const DEFAULT_TOKEN = "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";
 
 function getToken() { 
   const saved = localStorage.getItem('ss_gh_token');
@@ -666,10 +666,15 @@ async function ghRequest(method, path, body) {
     body: body ? JSON.stringify(body) : undefined
   });
   
+  if (resp.status === 401) {
+    const errorData = await resp.json();
+    console.error('[GH] Auth Failed:', errorData);
+    throw new Error(`❌ Błąd Autoryzacji (401). Sprawdź token ghp_... w ustawieniach "EDIT TOKEN". Szczegóły: ${errorData.message}`);
+  }
+
   const data = await resp.json();
   if (!resp.ok) {
     console.error('[GH] Error:', data);
-    if (resp.status === 401) throw new Error('Błędny Token (Bad credentials) - sprawdź czy token ghp_... jest poprawny i ma uprawnienia "repo"');
     throw new Error(data.message || `HTTP ${resp.status}`);
   }
   return data;
